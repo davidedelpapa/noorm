@@ -15,3 +15,6 @@ criterion = "0.5.1"
 [[bench]]
 name = "benchmarks"
 harness = false
+
+[dependencies]
+sqlparser = { version = "0.51.0", features = ["serde"] }
