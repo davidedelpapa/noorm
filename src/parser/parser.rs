@@ -1,7 +1,12 @@
 use std::path::PathBuf;
+use serde::Deserialize;
+use toml;
+
+use super::ParserConfigError;
 
 /// Dialects used to parse SQL.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Deserialize)]
+#[serde(tag = "type")]
 pub enum Dialect {
     /// A permissive, general purpose Dialect, which parses a wide variety of SQL statements, from many different dialects.
     Generic,
@@ -10,7 +15,7 @@ pub enum Dialect {
 }
 
 /// Parser configuration
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Deserialize)]
 pub struct ParserConfig {
     /// Dialect used for SQL parsing
     pub dialect: Dialect,
@@ -35,6 +40,35 @@ impl ParserConfig {
             migrations: PathBuf::new(),
             queries: PathBuf::new(),
         }
+    }
+
+    /// Create a new ParserConfig from a toml string.
+    /// 
+    /// # Arguments
+    ///
+    /// * `conf_string` - A TOML configuration string.
+    /// 
+    /// # Errors
+    /// 
+    /// * Can return a `ParserConfigError` if the TOML parsing fails
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use noorm::prelude::*;
+    /// 
+    /// let conf_string = r#"
+    ///     
+    ///     migrations = '.'
+    ///     queries = '.'
+    ///     dialect = {type = "Generic"}
+    /// "#;
+    /// 
+    /// let config = ParserConfig::from_toml(&conf_string).unwrap();
+    /// ```
+    pub fn from_toml(conf_string: &str) -> Result<Self, ParserConfigError> {
+        let config: ParserConfig = toml::from_str(conf_string)?;
+        Ok(config)
     }
 }
 

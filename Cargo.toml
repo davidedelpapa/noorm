@@ -17,4 +17,7 @@ name = "benchmarks"
 harness = false
 
 [dependencies]
+serde = { version = "1.0.210", features = ["derive"] }
 sqlparser = { version = "0.51.0", features = ["serde"] }
+thiserror = "1.0.64"
+toml = "0.8.19"
