@@ -28,7 +28,7 @@ cargo bench
 
 Generate the documentation:
 ```bash
-cargo doc  --no-deps --open
+cargo doc --no-deps --open
 ```
 
 ## LICENSE
