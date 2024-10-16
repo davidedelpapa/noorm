@@ -1,0 +1,17 @@
+[package]
+name = "noorm"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+members = [
+    ".",
+    "noorm-gen"
+]
+
+[dev-dependencies]
+criterion = "0.5.1"
+
+[[bench]]
+name = "benchmarks"
+harness = false
