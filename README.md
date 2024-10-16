@@ -8,6 +8,7 @@ __WARNING__: Still a concept, not usable yet (it's basically a hello world)
 Clone the repo:
 ```bash
 git clone https://github.com/davidedelpapa/noorm.git
+cd noorm
 ```
 
 Run the cli:
