@@ -5,21 +5,24 @@ use toml;
 use super::ParserConfigError;
 
 /// Dialects used to parse SQL.
-#[derive(Debug, PartialEq, Clone, Deserialize)]
+#[derive(Debug, Default, PartialEq, Clone, Deserialize)]
 #[serde(tag = "type")]
 pub enum Dialect {
     /// A permissive, general purpose Dialect, which parses a wide variety of SQL statements, from many different dialects.
+    #[default]
     Generic,
     /// MySQL dialect
     MySQL,   
 }
 
 /// Parser configuration
-#[derive(Debug, PartialEq, Clone, Deserialize)]
+#[derive(Debug, Default, PartialEq, Clone, Deserialize)]
 pub struct ParserConfig {
     /// Dialect used for SQL parsing
+    #[serde(default)]
     pub dialect: Dialect,
     /// Directory where the migrations are found
+    #[serde(default = "get_default_path")]
     pub migrations: PathBuf,
     /// Directory where the queries are found
     pub queries: PathBuf,
@@ -58,9 +61,8 @@ impl ParserConfig {
     /// use noorm::prelude::*;
     /// 
     /// let conf_string = r#"
-    ///     
-    ///     migrations = '.'
-    ///     queries = '.'
+    ///     migrations = "migrations/"
+    ///     queries = "queries/"
     ///     dialect = {type = "Generic"}
     /// "#;
     /// 
@@ -70,6 +72,10 @@ impl ParserConfig {
         let config: ParserConfig = toml::from_str(conf_string)?;
         Ok(config)
     }
+}
+
+fn get_default_path() -> PathBuf {
+    PathBuf::from(".").to_owned()
 }
 
 /// Generic Parser.
