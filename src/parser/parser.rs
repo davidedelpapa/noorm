@@ -1,8 +1,10 @@
-use std::path::PathBuf;
+use std::{fmt::Display, path::PathBuf};
 use serde::Deserialize;
 use toml;
 
-use super::ParserConfigError;
+use crate::parser::Language;
+
+use super::{errors::ParserError, ParserConfigError};
 
 /// Dialects used to parse SQL.
 #[derive(Debug, Default, PartialEq, Clone, Deserialize)]
@@ -20,7 +22,10 @@ pub enum Dialect {
 pub struct ParserConfig {
     /// Dialect used for SQL parsing
     #[serde(default)]
-    pub dialect: Dialect,
+    pub sql_dialect: Dialect,
+    /// Target laguage for code generation
+    #[serde(default)]
+    pub language: Language,
     /// Directory where the migrations are found
     #[serde(default = "get_default_path")]
     pub migrations: PathBuf,
@@ -39,7 +44,8 @@ impl ParserConfig {
     /// ```
     pub fn new() ->Self {
         Self {
-            dialect: Dialect::Generic,
+            sql_dialect: Dialect::Generic,
+            language: Language::default(),
             migrations: PathBuf::new(),
             queries: PathBuf::new(),
         }
@@ -80,7 +86,10 @@ fn get_default_path() -> PathBuf {
 
 /// Generic Parser.
 pub struct Parser {
-    conf: ParserConfig
+    conf: ParserConfig,
+    statement: Option<String>,
+    /// Output of the parser exection
+    pub output: Option<String>,
 }
 impl Parser {
     /// Create a new Parser.
@@ -94,7 +103,9 @@ impl Parser {
     /// ```
     pub fn new() -> Self {
         Self {
-            conf: ParserConfig::new(), 
+            conf: ParserConfig::new(),
+            statement: None,
+            output: None, 
         }
     }
 
@@ -136,6 +147,29 @@ impl Parser {
         &self.conf
     }
 
+    /// Set a Parser's statement.
+    /// 
+    /// # Arguments
+    ///
+    /// * `str` - A statement to parse.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use noorm::prelude::*;
+    /// 
+    /// let mut parser = Parser::new().statement("CREATE TABLE person ( Id INTEGER NOT NULL, name VARCHAR(255) )");
+    /// ```
+    pub fn statement (mut self, sql: impl Display) -> Self {
+        let s = sql.to_string();
+        self.statement = if s.is_empty() {
+            None
+        } else {
+            Some(s)
+        };
+        self
+    }
+
     /// Run a Parser.
     /// 
     /// # Examples
@@ -145,9 +179,17 @@ impl Parser {
     /// 
     /// let config = ParserConfig::new();
     /// let parser = Parser::new().set_config(config);
-    /// parser.parse();
+    /// parser.parse().expect("Parser error");
     /// ```
-    pub fn parse (&self) {
-        todo!();
+    pub fn parse (&mut self) -> Result<(), ParserError> {
+        let lang = &self.conf.language;
+
+        match &self.statement {
+            Some(sql) => {
+                self.output = Some(lang.parse_create_table(sql.as_str()));
+                Ok(())
+            },
+            None => Err(ParserError::Statement),
+        }
     }
 }

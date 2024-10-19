@@ -1,6 +1,6 @@
 use clap::Parser as cParser;
+use noorm::{parser::Language, prelude::*};
 use std::path::PathBuf;
-use noorm::prelude::*;
 
 /// A simple CLI to generate NoORM code.
 #[derive(cParser)]
@@ -18,13 +18,19 @@ fn main() {
     let cli = Cli::parse();
     let migrations = PathBuf::from(cli.migrations);
     let queries = PathBuf::from(cli.queries);
-    
-    let config = ParserConfig{
-        dialect: Dialect::Generic,
+
+    let config = ParserConfig {
+        sql_dialect: Dialect::Generic,
+        language: Language::new("Rust").expect("Unsupported language!"),
         migrations,
         queries,
     };
-    let _parser = Parser::new().set_config(config);
-
-    println!("So far everything looks OK, boss!");
+    let mut parser = Parser::new()
+        .set_config(config)
+        .statement("CREATE TABLE person ( Id INTEGER NOT NULL, name VARCHAR(255) )");
+    if parser.parse().is_ok() {
+        println!("{}", parser.output.unwrap())
+    } else {
+        println!("No bueno!");
+    }
 }

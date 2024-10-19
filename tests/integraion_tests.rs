@@ -5,7 +5,7 @@ use noorm::prelude::*;
 fn test_parser_builder() {
     let config = ParserConfig::new();
     assert_eq!(config, ParserConfig{
-        dialect: Dialect::Generic,
+        sql_dialect: Dialect::Generic,
         migrations: PathBuf::new(),
         queries: PathBuf::new(),
     });
