@@ -178,7 +178,7 @@ impl Parser {
     /// use noorm::prelude::*;
     /// 
     /// let config = ParserConfig::new();
-    /// let parser = Parser::new().set_config(config);
+    /// let mut parser = Parser::new().set_config(config);
     /// parser.parse().expect("Parser error");
     /// ```
     pub fn parse (&mut self) -> Result<(), ParserError> {
