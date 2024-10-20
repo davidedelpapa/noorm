@@ -17,7 +17,11 @@ name = "benchmarks"
 harness = false
 
 [dependencies]
+proc-macro2 = "1.0.88"
+quote = "1.0.37"
 serde = { version = "1.0.210", features = ["derive"] }
 sqlparser = { version = "0.51.0", features = ["serde"] }
+swc_ecma_ast = "1.0.0"
+syn = { version = "2.0.79", features = ["full"] }
 thiserror = "1.0.64"
 toml = "0.8.19"

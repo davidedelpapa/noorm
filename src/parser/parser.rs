@@ -18,7 +18,7 @@ pub enum Dialect {
 }
 
 /// Parser configuration
-#[derive(Debug, Default, PartialEq, Clone, Deserialize)]
+#[derive(Debug, Default, Clone, Deserialize)]
 pub struct ParserConfig {
     /// Dialect used for SQL parsing
     #[serde(default)]
@@ -182,11 +182,12 @@ impl Parser {
     /// parser.parse().expect("Parser error");
     /// ```
     pub fn parse (&mut self) -> Result<(), ParserError> {
-        let lang = &self.conf.language;
-
+        let lang = &mut self.conf.language;
+ 
         match &self.statement {
             Some(sql) => {
-                self.output = Some(lang.parse_create_table(sql.as_str()));
+                lang.parse_create_table(sql.as_str());
+                self.output = Some(lang.to_string());
                 Ok(())
             },
             None => Err(ParserError::Statement),

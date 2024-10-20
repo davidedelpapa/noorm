@@ -21,7 +21,7 @@ fn main() {
 
     let config = ParserConfig {
         sql_dialect: Dialect::Generic,
-        language: Language::new("Rust").expect("Unsupported language!"),
+        language: Language::new("javascript").expect("Unsupported language!"),
         migrations,
         queries,
     };
