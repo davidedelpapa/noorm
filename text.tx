@@ -1,0 +1,48 @@
+I have the following function in Rust: 
+pub fn rust_parse_create_table(sql: &str) -> RustAst {
+    let dialect = GenericDialect {}; // or MySqlDialect, PostgreSqlDialect, etc.
+    let ast = Parser::parse_sql(&dialect, sql).expect("Failed to parse SQL");
+    let mut table_vec = Vec::new();
+    for stmt in ast {
+        if let Statement::CreateTable(create_table) = stmt {
+            let table_name = &create_table.name.0[0].value;
+            let struct_name = Ident::new(&capitalize_first_letter(table_name), proc_macro2::Span::call_site());
+
+            // Create the Rust struct fields
+            let mut struct_fields = Vec::new();
+            
+            for column in create_table.columns {
+                let col_name = &column.name.value;
+                let col_type = &column.data_type;
+                let is_nullable = column.options.iter().any(|opt| opt.option == ColumnOption::Null);
+
+                // Map SQL type to Rust type
+                let rust_type = sql_to_type(col_type, is_nullable);
+
+                // Generate the field
+                let field_name = Ident::new(&col_name.to_lowercase(), proc_macro2::Span::call_site());
+                let field: Field = syn::parse_quote! {
+                    pub #field_name: #rust_type
+                };
+                struct_fields.push(field);
+            }
+            // Generate the full struct definition using syn
+            table_vec.push(ItemStruct {
+                attrs: Vec::new(),
+                vis: Visibility::Public(Pub::default()),
+                struct_token: Default::default(),
+                ident: struct_name,
+                generics: Default::default(),
+                fields: syn::Fields::Named(syn::FieldsNamed {
+                    brace_token: Default::default(),
+                    named: struct_fields.into_iter().collect(),
+                }),
+                semi_token: None,
+            });
+        }
+    } // End For statements
+    RustAst(table_vec)
+} 
+this function uses the crate sqlparser to analyze a CREATE TABLE instruction given as a string in input and gives back a pub struct RustAst(Vec<ItemStruct>) which is a wrapper to syn::ItemStruct, so it converts to a Rust struct using syn. 
+It uses a function sql_to_type that convert sql types to rust types using syn. 
+I want to create a similar function that uses sqlparser but instead of syn will have to use rustpython_ast and create a python object to map the CREATE TABLE, implementing also a custom sql_to_type for python, and giving back a rustpython_ast type (maybe stmt?) wrapped in pub struct PythonAst(<chosen_type>);

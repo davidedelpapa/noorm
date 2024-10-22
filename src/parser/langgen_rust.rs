@@ -49,6 +49,27 @@ impl Deref for RustAst {
     }
 }
 
+impl PartialEq for RustAst {
+    fn eq(&self, other: &Self) -> bool {
+        if self.0.len() != other.0.len() {
+            return false;
+        }
+
+        // Compare each `ItemStruct` by converting them to a `String`
+        for (item1, item2) in self.0.iter().zip(&other.0) {
+            let item1_str = item1.to_token_stream().to_string();
+            let item2_str = item2.to_token_stream().to_string();
+
+            if item1_str != item2_str {
+                return false;
+            }
+        }
+
+        true
+    }
+}
+
+
 impl<'de> Deserialize<'de> for RustAst {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -139,7 +160,7 @@ pub fn rust_parse_create_table(sql: &str) -> RustAst {
 pub fn rust_ast_to_string(ast: &Vec<ItemStruct>) -> String {
     let mut s = String::new();
     for item in ast {
-        s = format!("{}{}", s, item.to_token_stream().to_string());
+        s = format!("{}{}\n", s, item.to_token_stream().to_string());
     }
     s
 }

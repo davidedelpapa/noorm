@@ -3,12 +3,15 @@ use noorm::{parser::Language, prelude::*};
 
 #[test]
 fn test_parser_builder() {
+    let migrations = PathBuf::from(".");
+    let queries = PathBuf::from(".");
+
     let config = ParserConfig::new();
     assert_eq!(config, ParserConfig{
         sql_dialect: Dialect::Generic,
         language: Language::default(),
-        migrations: PathBuf::new(),
-        queries: PathBuf::new(),
+        migrations,
+        queries,
     });
     let parser = Parser::new().set_config(config.clone());
     assert_eq!(&config, parser.get_config())

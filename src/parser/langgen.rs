@@ -8,7 +8,7 @@ use super::{
 
 
 /// Language selection enum
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 pub enum Language {
     Rust(RustAst),
     Python(PythonAst),

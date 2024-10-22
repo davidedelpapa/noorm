@@ -21,13 +21,17 @@ fn main() {
 
     let config = ParserConfig {
         sql_dialect: Dialect::Generic,
-        language: Language::new("javascript").expect("Unsupported language!"),
+        language: Language::new("python").expect("Unsupported language!"),
         migrations,
         queries,
     };
+    let sql_statement = "
+    CREATE TABLE person ( Id INTEGER NOT NULL, name VARCHAR(255), phone_number VARCHAR(255) );
+    CREATE TABLE office ( Id INTEGER NOT NULL, name VARCHAR(255) );
+    ";
     let mut parser = Parser::new()
         .set_config(config)
-        .statement("CREATE TABLE person ( Id INTEGER NOT NULL, name VARCHAR(255) )");
+        .statement(sql_statement);
     if parser.parse().is_ok() {
         println!("{}", parser.output.unwrap())
     } else {

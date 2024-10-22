@@ -19,6 +19,18 @@ impl Deref for PythonAst {
     }
 }
 
+impl PartialEq for PythonAst {
+    fn eq(&self, other: &Self) -> bool {
+        if self.0.len() != other.0.len() {
+            return false;
+        }
+
+        // Compare the two ast by converting them to a `String`
+        let s1 = python_ast_to_string(self);
+        let s2 = python_ast_to_string(other);
+        s1 == s2
+    }
+}
 
 /// parse_create_table Python implementation
 pub fn python_parse_create_table(sql: &str) -> PythonAst {

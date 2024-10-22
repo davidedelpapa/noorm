@@ -18,7 +18,7 @@ pub enum Dialect {
 }
 
 /// Parser configuration
-#[derive(Debug, Default, Clone, Deserialize)]
+#[derive(Debug, Default, Clone, Deserialize, PartialEq)]
 pub struct ParserConfig {
     /// Dialect used for SQL parsing
     #[serde(default)]
