@@ -10,6 +10,7 @@ use quote::ToTokens;
 use std::ops::Deref;
 use std::fmt;
 
+/// AST type for Language::Rust(RustAst)
 #[derive(Clone)]
 pub struct RustAst(Vec<ItemStruct>);
 

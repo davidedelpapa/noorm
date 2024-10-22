@@ -3,12 +3,13 @@ use std::fmt::Write;
 use serde::Deserialize;
 use sqlparser::dialect::GenericDialect;
 use sqlparser::parser::Parser;
-use sqlparser::ast::{Statement, DataType, ColumnOption};
+use sqlparser::ast::{Statement, ColumnOption};
 use swc_ecma_ast::*;
-use swc_common::{SourceMap, Span, SyntaxContext, DUMMY_SP};
+use swc_common::{SourceMap, SyntaxContext, DUMMY_SP};
 use swc_common::sync::Lrc;
 use swc_ecma_codegen::{text_writer::JsWriter, Emitter};
 
+/// AST type for Language::JavaScript(JavaScriptAst)
 #[derive(Debug, Clone, Deserialize)]
 pub struct JavaScriptAst(Vec<VarDecl>);
 
@@ -67,11 +68,6 @@ pub fn javascript_parse_create_table(sql: &str) -> JavaScriptAst {
                     sym: col_name.to_string().into(),
                     span: DUMMY_SP,
                 });
-                let value = Expr::Lit(Lit::Str(Str {
-                    value: col_name.to_string().into(),
-                    span: DUMMY_SP,
-                    raw: None,
-                }));
 
                 props.push(PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
                     key,

@@ -10,8 +10,11 @@ use super::{
 /// Language selection enum
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 pub enum Language {
+    /// Rust language
     Rust(RustAst),
+    /// Python language
     Python(PythonAst),
+    /// JavaScript language
     JavaScript(JavaScriptAst),
 }
 
@@ -23,6 +26,10 @@ impl Default for Language {
 }
 
 impl Language {
+    /// new() for Language
+    /// 
+    /// Parameters
+    /// * language_name: &str the name of the language to select, e.g., "Rust"
     pub fn new(language_name: &str) -> Option<Self> {
         match language_name.to_lowercase().as_str() {
             "rust" => {

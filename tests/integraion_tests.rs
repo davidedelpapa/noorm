@@ -3,8 +3,8 @@ use noorm::{parser::Language, prelude::*};
 
 #[test]
 fn test_parser_builder() {
-    let migrations = PathBuf::from(".");
-    let queries = PathBuf::from(".");
+    let migrations = PathBuf::new();
+    let queries = PathBuf::new();
 
     let config = ParserConfig::new();
     assert_eq!(config, ParserConfig{

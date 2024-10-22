@@ -2,6 +2,7 @@ use std::ops::Deref;
 
 use serde::Deserialize;
 
+/// AST type for Language::Python(PythonAst)
 #[derive(Debug, Clone, Deserialize)]
 pub struct PythonAst(String);
 
