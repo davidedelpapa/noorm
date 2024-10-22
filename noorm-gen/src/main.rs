@@ -21,7 +21,7 @@ fn main() {
 
     let config = ParserConfig {
         sql_dialect: Dialect::Generic,
-        language: Language::new("python").expect("Unsupported language!"),
+        language: Language::new("dummy").expect("Unsupported language!"),
         migrations,
         queries,
     };

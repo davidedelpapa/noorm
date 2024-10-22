@@ -3,7 +3,8 @@ use serde::Deserialize;
 use super::{
     RustAst, rust_ast_to_string, rust_parse_create_table,
     JavaScriptAst, javascript_parse_create_table, javascript_ast_to_string,
-    PythonAst, python_parse_create_table, python_ast_to_string, 
+    PythonAst, python_parse_create_table, python_ast_to_string,
+    DummyAst, dummy_parse_create_table, dummy_ast_to_string, 
 };
 
 
@@ -16,12 +17,14 @@ pub enum Language {
     Python(PythonAst),
     /// JavaScript language
     JavaScript(JavaScriptAst),
+    /// Dummy language
+    Dummy(DummyAst),
 }
 
 impl Default for Language {
     fn default() -> Self {
-        let rust_ast = RustAst::default();
-        Language::Rust(rust_ast)
+        let dummy_ast = DummyAst::default();
+        Language::Dummy(dummy_ast)
     }
 }
 
@@ -43,6 +46,10 @@ impl Language {
             "javascript" => {
                 let ast = JavaScriptAst::default();
                 Some(Language::JavaScript(ast))
+            },
+            "dummy" => {
+                let ast = DummyAst::default();
+                Some(Language::Dummy(ast))
             }
             _ => None, // Handle unsupported languages
         }
@@ -54,7 +61,7 @@ impl Language {
             Language::Rust(ast) => *ast = rust_parse_create_table(sql),
             Language::Python(ast) => *ast = python_parse_create_table(sql),
             Language::JavaScript(ast) => *ast = javascript_parse_create_table(sql),
-            _ => unreachable!(),
+            Language::Dummy(ast) => *ast = dummy_parse_create_table(sql),
         }
     }
 
@@ -64,7 +71,7 @@ impl Language {
             Language::Rust(fn_ast) => rust_ast_to_string(fn_ast),
             Language::Python(fn_ast) => python_ast_to_string(fn_ast),
             Language::JavaScript(fn_ast) => javascript_ast_to_string(fn_ast),
-            _ => unreachable!(),
+            Language::Dummy(fn_ast) => dummy_ast_to_string(fn_ast),
         }
     }
 }
